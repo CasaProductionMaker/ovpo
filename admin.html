@@ -14,19 +14,9 @@
         </div>
         <div id="main">
             <div class="website_section flex_column light_bg">
-                <h1>OverPowered Waitlist Form</h1>
-                <div id="waitlist_form_holder" class="flex_column">
-                    <div class="form_section">
-                        <label for="discord_username_input">Discord username (Not display name): </label>
-                        <input type="text" name="discord_username_input" id="discord_username_input">
-                    </div>
-
-                    <div class="form_section">
-                        <label for="florr_username_input">Florr username: </label>
-                        <input type="text" name="florr_username_input" id="florr_username_input">
-                    </div>
-
-                    <button onclick="addWaitlistPerson()">Submit!</button>
+                <h1>Admin stuf (Scuffed edition)</h1>
+                <div id="waitlist_panel" class="flex_column">
+                    <div id="waitlist_scroll" class="flex_column"></div>
                 </div>
             </div>
         </div>
@@ -34,6 +24,6 @@
 		<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     	<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     	<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-        <script src="waitlist_app.js"></script>
+        <script src="admin.js"></script>
     </body>
 </html>
