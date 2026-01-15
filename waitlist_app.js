@@ -10,20 +10,32 @@ const firebaseConfig = {
 
 const app = firebase.initializeApp(firebaseConfig);
 
-function addWaitlistPerson() {
+async function addWaitlistPerson() {
     let discord_username = document.querySelector("#discord_username_input").value;
     let florr_username = document.querySelector("#florr_username_input").value;
+    let is_returning = document.querySelector("#is_returning_input").checked;
 
     if (!discord_username || !florr_username) return;
 
-    firebase.database().ref("/waitlist/" + Date.now()).set({
-        discord_username: discord_username, 
-        florr_username: florr_username, 
-        time_added: Date.now()
-    });
+    if (is_returning) {
+		await firebase.database().ref("/waitlist/").push({
+			discord_username: discord_username, 
+			florr_username: florr_username, 
+			time_added: Date.now(),
+			returning_member: is_returning
+		});
+    } else {
+		await firebase.database().ref("/waitlist/" + Date.now()).set({
+			discord_username: discord_username, 
+			florr_username: florr_username, 
+			time_added: Date.now(),
+			returning_member: is_returning
+		});
+	}
 
     document.querySelector("#discord_username_input").value = "";
     document.querySelector("#florr_username_input").value = "";
+    document.querySelector("#is_returning_input").checked = false;
 
-    alert("Submitted!");
+    window.location.href = "admin.html";
 }

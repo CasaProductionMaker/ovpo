@@ -27,6 +27,7 @@ firebase.database().ref("waitlist").once('value', (data) => {
         waitlistMember.innerHTML = `
         <h3>${value.florr_username}</h3>
         <p>(@${value.discord_username})<br>Joined MS: ${value.time_added}</p>
+        ${value.returning_member ? "<p>Returning Member.</p>" : ""}
         <button onclick="removeFromWaitlist('${key}')" class="red_button">Added to Guild?</button>
         `;
         document.querySelector("#waitlist_scroll").appendChild(waitlistMember);
