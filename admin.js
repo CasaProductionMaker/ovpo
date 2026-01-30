@@ -21,16 +21,18 @@ firebase.database().ref("waitlist").once('value', (data) => {
         document.querySelector("#waitlist_scroll").appendChild(noOneHere);
         return;
     }
+    let place = 1;
     for (const [key, value] of Object.entries(snapshot)) {
         let waitlistMember = document.createElement("div");
         waitlistMember.classList.add("waitlist_member");
         waitlistMember.innerHTML = `
-        <h3>${value.florr_username}</h3>
+        <h3>${place}: ${value.florr_username}</h3>
         <p>(@${value.discord_username})<br>Joined MS: ${value.time_added}</p>
         ${value.returning_member ? "<p>Returning Member.</p>" : ""}
         <button onclick="removeFromWaitlist('${key}')" class="red_button">Added to Guild?</button>
         `;
         document.querySelector("#waitlist_scroll").appendChild(waitlistMember);
+        place++;
     }
 });
 
