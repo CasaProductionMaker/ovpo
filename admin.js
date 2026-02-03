@@ -9,6 +9,7 @@ const firebaseConfig = {
 };
 
 const app = firebase.initializeApp(firebaseConfig);
+let isAdmin = false;
 
 firebase.database().ref("waitlist").once('value', (data) => {
     const snapshot = data.val();
@@ -29,8 +30,7 @@ firebase.database().ref("waitlist").once('value', (data) => {
         <h3>${place}: ${value.florr_username}</h3>
         <p>(@${value.discord_username})<br>Joined MS: ${value.time_added}</p>
         ${value.returning_member ? "<p>Returning Member.</p>" : ""}
-        <button onclick="removeFromWaitlist('${key}')" class="red_button">Added to Guild?</button>
-        `;
+        ${isAdmin ? `<button onclick="removeFromWaitlist('${key}')" class="red_button">Added to Guild?</button>` : ""}`;
         document.querySelector("#waitlist_scroll").appendChild(waitlistMember);
         place++;
     }
@@ -44,7 +44,21 @@ function removeFromWaitlist(key) {
 firebase.auth().onAuthStateChanged(async (user) => {
     console.log(user)
     if (user) {
-        //You're logged in!
+        try {
+            const idTokenResult = await user.getIdTokenResult(true);
+
+            if (idTokenResult.claims.admin) {
+                isAdmin = true;
+                let addButton = document.createElement("a");
+                addButton.classList.add("link_button");
+                addButton.setAttribute("href", "waitlist_form.html");
+                addButton.textContent = "Add to Waitlist";
+
+                document.querySelector("#big_holder").appendChild(addButton);
+            }
+        } catch (error) {
+            console.error("Error checking admin claims:", error);
+        }
     } else {
         //You're logged out.
     }
