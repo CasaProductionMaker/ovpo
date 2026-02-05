@@ -11,33 +11,30 @@ const firebaseConfig = {
 const app = firebase.initializeApp(firebaseConfig);
 let isAdmin = false;
 
-firebase.database().ref("waitlist").once('value', (data) => {
+firebase.database().ref("members").once('value', (data) => {
     const snapshot = data.val();
     if (snapshot == null) {
         let noOneHere = document.createElement("div");
         noOneHere.classList.add("list_member");
         noOneHere.innerHTML = `
-        <h3>Empty Waitlist</h3>
+        <h3>No members?! I guess OvPo died..</h3>
         `;
-        document.querySelector("#waitlist_scroll").appendChild(noOneHere);
+        document.querySelector("#members_scroll").appendChild(noOneHere);
         return;
     }
-    let place = 1;
     for (const [key, value] of Object.entries(snapshot)) {
-        let waitlistMember = document.createElement("div");
-        waitlistMember.classList.add("list_member");
-        waitlistMember.innerHTML = `
-        <h3>${place}: ${value.florr_username}</h3>
-        <p>(@${value.discord_username})<br>Joined MS: ${value.time_added}</p>
-        ${value.returning_member ? "<p>Returning Member.</p>" : ""}
-        ${isAdmin ? `<button onclick="removeFromWaitlist('${key}')" class="red_button">Added to Guild?</button>` : ""}`;
-        document.querySelector("#waitlist_scroll").appendChild(waitlistMember);
-        place++;
+        let member = document.createElement("div");
+        member.classList.add("list_member");
+        member.innerHTML = `
+        <h3>${value.florr_username}</h3>
+        <p>(@${value.discord_username})</p>
+        ${isAdmin ? `<button onclick="removeFromMembers('${key}')" class="red_button">Left Guild?</button>` : ""}`;
+        document.querySelector("#members_scroll").appendChild(member);
     }
 });
 
-function removeFromWaitlist(key) {
-    firebase.database().ref("/waitlist/" + key).remove();
+function removeFromMembers(key) {
+    firebase.database().ref("/members/" + key).remove();
     window.location.reload(true);
 }
 
@@ -51,8 +48,8 @@ firebase.auth().onAuthStateChanged(async (user) => {
                 isAdmin = true;
                 let addButton = document.createElement("a");
                 addButton.classList.add("link_button");
-                addButton.setAttribute("href", "waitlist_form.html");
-                addButton.textContent = "Add to Waitlist";
+                addButton.setAttribute("href", "member_form.html");
+                addButton.textContent = "Add Member";
 
                 document.querySelector("#big_holder").appendChild(addButton);
             }

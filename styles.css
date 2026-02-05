@@ -175,12 +175,29 @@ h2 {
     width: 100%;
 }
 
-.waitlist_member {
+.list_member {
     text-align: center;
     background-color: #00000055;
     border-radius: 10px;
     margin: 10px;
 }
+
+/* Members */
+
+#members_panel {
+    background-color: #00000055;
+    max-height: 50%;
+    overflow: hidden;
+    width: 50%;
+    border-radius: 20px;
+    padding: 10px;
+}
+#members_scroll {
+    overflow-y: scroll;
+    width: 100%;
+}
+
+/* Scrollbar */
 
 ::-webkit-scrollbar {
   width: 10px;
