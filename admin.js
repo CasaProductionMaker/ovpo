@@ -11,34 +11,50 @@ const firebaseConfig = {
 const app = firebase.initializeApp(firebaseConfig);
 let isAdmin = false;
 
-firebase.database().ref("waitlist").once('value', (data) => {
-    const snapshot = data.val();
-    if (snapshot == null) {
-        let noOneHere = document.createElement("div");
-        noOneHere.classList.add("list_member");
-        noOneHere.innerHTML = `
-        <h3>Empty Waitlist</h3>
-        `;
-        document.querySelector("#waitlist_scroll").appendChild(noOneHere);
-        return;
-    }
-    let place = 1;
-    for (const [key, value] of Object.entries(snapshot)) {
-        let waitlistMember = document.createElement("div");
-        waitlistMember.classList.add("list_member");
-        waitlistMember.innerHTML = `
-        <h3>${place}: ${value.florr_username}</h3>
-        <p>(@${value.discord_username})<br>Joined MS: ${value.time_added}</p>
-        ${value.returning_member ? "<p>Returning Member.</p>" : ""}
-        ${isAdmin ? `<button onclick="removeFromWaitlist('${key}')" class="red_button">Added to Guild?</button>` : ""}`;
-        document.querySelector("#waitlist_scroll").appendChild(waitlistMember);
-        place++;
-    }
+document.querySelector("#search_input").addEventListener("change", (event) => {
+    unloadWaitlist();
+    loadWaitlist(event.target.value);
 });
+
+function loadWaitlist(filter = "") {
+    firebase.database().ref("waitlist").once('value', (data) => {
+        const snapshot = data.val();
+        if (snapshot == null) {
+            let noOneHere = document.createElement("div");
+            noOneHere.classList.add("list_member");
+            noOneHere.innerHTML = `
+            <h3>Empty Waitlist</h3>
+            `;
+            document.querySelector("#waitlist_scroll").appendChild(noOneHere);
+            return;
+        }
+        let place = 1;
+        for (const [key, value] of Object.entries(snapshot)) {
+            // filter
+            if (!(value.florr_username.toLowerCase().includes(filter.toLowerCase()) || value.discord_username.toLowerCase().includes(filter.toLowerCase()))) continue;
+
+            // add element
+            let waitlistMember = document.createElement("div");
+            waitlistMember.classList.add("list_member");
+            waitlistMember.innerHTML = `
+            <h3>${place}: ${value.florr_username}</h3>
+            <p>(@${value.discord_username})<br>Joined MS: ${value.time_added}</p>
+            ${value.returning_member ? "<p>Returning Member.</p>" : ""}
+            ${isAdmin ? `<button onclick="removeFromWaitlist('${key}')" class="red_button">Added to Guild?</button>` : ""}`;
+            document.querySelector("#waitlist_scroll").appendChild(waitlistMember);
+            place++;
+        }
+    });
+}
+
+function unloadWaitlist() {
+    document.querySelector("#waitlist_scroll").innerHTML = '';
+}
 
 function removeFromWaitlist(key) {
     firebase.database().ref("/waitlist/" + key).remove();
-    window.location.reload(true);
+    unloadWaitlist();
+    loadWaitlist(document.querySelector("#search_input").value);
 }
 
 firebase.auth().onAuthStateChanged(async (user) => {
@@ -59,6 +75,8 @@ firebase.auth().onAuthStateChanged(async (user) => {
         } catch (error) {
             console.error("Error checking admin claims:", error);
         }
+
+        loadWaitlist();
     } else {
         //You're logged out.
     }

@@ -38,11 +38,11 @@ body {
 
 .top_bar_item::after {
     content: "";
-    background-color: #AAA;
+    background-color: #888;
     position: absolute;
     bottom: 8px;
     width: 0;
-    height: 2px;
+    height: 3px;
     left: 50%;
     padding: 0;
     margin: 0;
@@ -154,7 +154,7 @@ button {
 }
 
 .red_button {
-    background-color: #c40000;
+    background-color: #6dff65;
     padding: 8px;
     text-decoration: none;
     color: #000;
@@ -162,8 +162,15 @@ button {
     box-sizing: border-box;
     border-radius: 20px;
     max-width: fit-content;
-    margin: auto;
     margin-bottom: 10px;
+    margin-left: 5px;
+    margin-right: 5px;
+    transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.red_button:hover {
+    background-color: #519d4d;
+    box-shadow: 0 0 10px;
 }
 
 button:hover {
@@ -208,6 +215,7 @@ h2 {
     width: 50%;
     border-radius: 20px;
     padding: 10px;
+    box-shadow: 0 0 5px;
 }
 #waitlist_scroll {
     overflow-y: scroll;
@@ -219,6 +227,7 @@ h2 {
     background-color: #00000055;
     border-radius: 10px;
     margin: 10px;
+    box-shadow: 0 0 5px;
 }
 
 /* Members */
@@ -230,10 +239,31 @@ h2 {
     width: 50%;
     border-radius: 20px;
     padding: 10px;
+    box-shadow: 0 0 5px;
 }
 #members_scroll {
     overflow-y: scroll;
     width: 100%;
+}
+
+#panel_searchbar {
+    background-color: #00000000;
+    margin: 10px;
+}
+
+input[type="text"].transparent_input {
+    box-sizing: border-box;
+    padding: 10px;
+    border-radius: 20px;
+    border: 0px;
+    box-shadow: 0px 0px 5px;
+    background-color: #00000055;
+    width: 100%;
+}
+
+input[type="text"].transparent_input::placeholder {
+  color: #000;
+  opacity: 0.5;
 }
 
 /* Scrollbar */

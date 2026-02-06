@@ -11,31 +11,62 @@ const firebaseConfig = {
 const app = firebase.initializeApp(firebaseConfig);
 let isAdmin = false;
 
-firebase.database().ref("members").once('value', (data) => {
-    const snapshot = data.val();
-    if (snapshot == null) {
-        let noOneHere = document.createElement("div");
-        noOneHere.classList.add("list_member");
-        noOneHere.innerHTML = `
-        <h3>No members?! I guess OvPo died..</h3>
-        `;
-        document.querySelector("#members_scroll").appendChild(noOneHere);
-        return;
-    }
-    for (const [key, value] of Object.entries(snapshot)) {
-        let member = document.createElement("div");
-        member.classList.add("list_member");
-        member.innerHTML = `
-        <h3>${value.florr_username}</h3>
-        <p>(@${value.discord_username})</p>
-        ${isAdmin ? `<button onclick="removeFromMembers('${key}')" class="red_button">Left Guild?</button>` : ""}`;
-        document.querySelector("#members_scroll").appendChild(member);
-    }
+document.querySelector("#search_input").addEventListener("change", (event) => {
+    unloadMembers();
+    loadMembers(event.target.value);
 });
+
+function loadMembers(filter = "") {
+    firebase.database().ref("members").once('value', (data) => {
+        const snapshot = data.val();
+        if (snapshot == null) {
+            let noOneHere = document.createElement("div");
+            noOneHere.classList.add("list_member");
+            noOneHere.innerHTML = `
+            <h3>No members?! I guess OvPo died..</h3>
+            `;
+            document.querySelector("#members_scroll").appendChild(noOneHere);
+            return;
+        }
+        for (const [key, value] of Object.entries(snapshot)) {
+            // filter
+            if (!(value.florr_username.toLowerCase().includes(filter.toLowerCase()) || value.discord_username.toLowerCase().includes(filter.toLowerCase()))) continue;
+
+            // Create in DOM
+            let member = document.createElement("div");
+            member.classList.add("list_member");
+            member.innerHTML = `
+            <h3>${value.florr_username}</h3>
+            <p>(@${value.discord_username})</p>
+            <p>${value.strike_amount} strikes.</p>
+            ${isAdmin ? `<button onclick="removeFromMembers('${key}')" class="red_button">Left Guild?</button>` : ""}
+            ${isAdmin ? `<button onclick="addStrike('${key}')" class="red_button">Add Strike</button>` : ""}`;
+            document.querySelector("#members_scroll").appendChild(member);
+        }
+    });
+}
+
+function unloadMembers() {
+    document.querySelector("#members_scroll").innerHTML = '';
+}
 
 function removeFromMembers(key) {
     firebase.database().ref("/members/" + key).remove();
-    window.location.reload(true);
+    unloadMembers();
+    loadMembers(document.querySelector("#search_input").value);
+}
+
+async function addStrike(key) {
+    let currentAmount = 0;
+    await firebase.database().ref("members/" + key).once('value', (data) => {
+        currentAmount = data.val().strike_amount;
+    })
+    await firebase.database().ref("/members/" + key).update({
+        strike_amount: currentAmount + 1
+    });
+
+    unloadMembers();
+    loadMembers(document.querySelector("#search_input").value);
 }
 
 firebase.auth().onAuthStateChanged(async (user) => {
@@ -56,6 +87,8 @@ firebase.auth().onAuthStateChanged(async (user) => {
         } catch (error) {
             console.error("Error checking admin claims:", error);
         }
+
+        loadMembers();
     } else {
         //You're logged out.
     }

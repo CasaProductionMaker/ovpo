@@ -29,6 +29,7 @@ async function addMember() {
 	await firebase.database().ref("/members/").push({
 		discord_username: discord_username, 
 		florr_username: florr_username, 
+		strike_amount: 0, 
 		time_added: Date.now()
 	});
 
