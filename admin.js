@@ -108,6 +108,11 @@ function showEditPopup(userID, florr_username, discord_username) {
     `;
 
     document.body.appendChild(popupWindow);
+
+    requestAnimationFrame(() => {
+        popupWindow.style.width = "75%";
+        popupWindow.style.left = "12.5%";
+    });
 }
 
 function showDeleteUserPopup(userID, florr_username) {
@@ -121,6 +126,11 @@ function showDeleteUserPopup(userID, florr_username) {
     `;
 
     document.body.appendChild(popupWindow);
+
+    requestAnimationFrame(() => {
+        popupWindow.style.width = "75%";
+        popupWindow.style.left = "12.5%";
+    });
 }
 
 async function editWaitlistPerson(userID) {
