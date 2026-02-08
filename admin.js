@@ -31,16 +31,32 @@ function loadWaitlist(filter = "") {
         let place = 1;
         for (const [key, value] of Object.entries(snapshot)) {
             // filter
-            if (!(value.florr_username.toLowerCase().includes(filter.toLowerCase()) || value.discord_username.toLowerCase().includes(filter.toLowerCase()))) continue;
+            if (!(value.florr_username.toLowerCase().includes(filter.toLowerCase()) || value.discord_username.toLowerCase().includes(filter.toLowerCase()))) {
+                place++;
+                continue;
+            }
 
             // add element
             let waitlistMember = document.createElement("div");
             waitlistMember.classList.add("list_member");
             waitlistMember.innerHTML = `
-            <h3>${place}: ${value.florr_username}</h3>
-            <p>(@${value.discord_username})<br>Joined MS: ${value.time_added}</p>
-            ${value.returning_member ? "<p>Returning Member.</p>" : ""}
-            ${isAdmin ? `<button onclick="removeFromWaitlist('${key}')" class="red_button">Added to Guild?</button>` : ""}`;
+                <h3>${place}: ${value.florr_username}</h3>
+                <p>(@${value.discord_username})<br>Joined MS: ${value.time_added}</p>
+                ${value.returning_member ? "<p>Returning Member.</p>" : ""}
+                ${isAdmin ? `<button onclick="transferWaitlistMember('${key}', '${value.florr_username}', '${value.discord_username}')" class="red_button">Added to Guild?</button>` : ""}
+                <div class="list_item_options">
+                    <button onclick="showEditPopup('${key}', '${value.florr_username}', '${value.discord_username}')" class="small_option_button"><img src="Images/EditIcon.svg" class="button_icon edit_img"></button>
+                    <button onclick="showDeleteUserPopup('${key}', '${value.florr_username}')" class="small_option_button"><img src="Images/TrashIconClosed.svg" class="button_icon trash_img"></button>
+                </div>
+            `;
+
+            waitlistMember.querySelector(".trash_img").addEventListener("mouseenter", function() {
+                waitlistMember.querySelector(".trash_img").src = "Images/TrashIconOpen.svg";
+            });
+            waitlistMember.querySelector(".trash_img").addEventListener("mouseleave", function() {
+                waitlistMember.querySelector(".trash_img").src = "Images/TrashIconClosed.svg";
+            });
+
             document.querySelector("#waitlist_scroll").appendChild(waitlistMember);
             place++;
         }
@@ -55,6 +71,76 @@ function removeFromWaitlist(key) {
     firebase.database().ref("/waitlist/" + key).remove();
     unloadWaitlist();
     loadWaitlist(document.querySelector("#search_input").value);
+    document.querySelector(".popup_window").remove();
+}
+
+function transferWaitlistMember(key, florr_username, discord_username) {
+    firebase.database().ref("/members/").push({
+		discord_username: discord_username, 
+		florr_username: florr_username, 
+		strike_amount: 0, 
+		time_added: Date.now()
+	});
+    firebase.database().ref("/waitlist/" + key).remove();
+    unloadWaitlist();
+    loadWaitlist(document.querySelector("#search_input").value);
+}
+
+function showEditPopup(userID, florr_username, discord_username) {
+    const popupWindow = document.createElement("div");
+    popupWindow.classList.add("popup_window");
+    popupWindow.innerHTML = `
+        <h1>Edit Waitlist Member</h1>
+        <div id="waitlist_form_holder" class="flex_column">
+            <div class="form_section">
+                <label for="discord_username_input">Discord username (Not display name): </label>
+                <input type="text" name="discord_username_input" id="discord_username_input" value="${discord_username}">
+            </div>
+
+            <div class="form_section">
+                <label for="florr_username_input">Florr username: </label>
+                <input type="text" name="florr_username_input" id="florr_username_input" value="${florr_username}">
+            </div>
+
+            <button onclick="editWaitlistPerson('${userID}')">Apply</button>
+        </div>
+        <button onclick="closePopup()" class="close_popup"><img src="Images/ClosePopup.svg" class="button_icon"></button>
+    `;
+
+    document.body.appendChild(popupWindow);
+}
+
+function showDeleteUserPopup(userID, florr_username) {
+    const popupWindow = document.createElement("div");
+    popupWindow.classList.add("popup_window");
+    popupWindow.innerHTML = `
+        <h1>Remove user?</h1>
+        <p class="align_center">Are you sure you want to permanently remove ${florr_username} from the waitlist? This action is permanent.</p>
+        <button onclick="removeFromWaitlist('${userID}')" class="form_button">Remove</button>
+        <button onclick="closePopup()" class="close_popup"><img src="Images/ClosePopup.svg" class="button_icon"></button>
+    `;
+
+    document.body.appendChild(popupWindow);
+}
+
+async function editWaitlistPerson(userID) {
+    let discord_username = document.querySelector("#discord_username_input").value;
+    let florr_username = document.querySelector("#florr_username_input").value;
+
+    if (!discord_username || !florr_username) return;
+    
+    await firebase.database().ref("/waitlist/" + userID).update({
+        discord_username: discord_username, 
+        florr_username: florr_username
+    });
+
+    document.querySelector(".popup_window").remove();
+    unloadWaitlist();
+    loadWaitlist(document.querySelector("#search_input").value);
+}
+
+function closePopup() {
+    document.querySelector(".popup_window").remove();
 }
 
 firebase.auth().onAuthStateChanged(async (user) => {
