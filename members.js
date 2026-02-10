@@ -28,9 +28,15 @@ function loadMembers(filter = "") {
             document.querySelector("#members_scroll").appendChild(noOneHere);
             return;
         }
+        let totalAmount = 0;
+        let mostStrikes = 0;
+        let mostStrikesUser = "";
         for (const [key, value] of Object.entries(snapshot)) {
             // filter
-            if (!(value.florr_username.toLowerCase().includes(filter.toLowerCase()) || value.discord_username.toLowerCase().includes(filter.toLowerCase()))) continue;
+            if (!(value.florr_username.toLowerCase().includes(filter.toLowerCase()) || value.discord_username.toLowerCase().includes(filter.toLowerCase()))) {
+                totalAmount++;
+                continue;
+            }
 
             // Create in DOM
             let member = document.createElement("div");
@@ -42,7 +48,17 @@ function loadMembers(filter = "") {
             ${isAdmin ? `<button onclick="removeFromMembers('${key}')" class="red_button">Left Guild?</button>` : ""}
             ${isAdmin ? `<button onclick="addStrike('${key}')" class="red_button">Add Strike</button>` : ""}`;
             document.querySelector("#members_scroll").appendChild(member);
+            totalAmount++;
+
+            // Fun stats!
+            if (value.strike_amount > mostStrikes) {
+                mostStrikes = value.strike_amount;
+                mostStrikesUser = value.florr_username;
+            }
         }
+
+        document.querySelector("#member_count").innerText = "Total Registered Members: " + totalAmount;
+        document.querySelector("#max_strikes").innerText = `Most amount of strikes: ${mostStrikesUser} (${mostStrikes} strikes)`;
     });
 }
 

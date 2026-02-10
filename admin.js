@@ -43,23 +43,29 @@ function loadWaitlist(filter = "") {
                 <h3>${place}: ${value.florr_username}</h3>
                 <p>(@${value.discord_username})<br>Joined MS: ${value.time_added}</p>
                 ${value.returning_member ? "<p>Returning Member.</p>" : ""}
-                ${isAdmin ? `<button onclick="transferWaitlistMember('${key}', '${value.florr_username}', '${value.discord_username}')" class="red_button">Added to Guild?</button>` : ""}
-                <div class="list_item_options">
-                    <button onclick="showEditPopup('${key}', '${value.florr_username}', '${value.discord_username}')" class="small_option_button"><img src="Images/EditIcon.svg" class="button_icon edit_img"></button>
-                    <button onclick="showDeleteUserPopup('${key}', '${value.florr_username}')" class="small_option_button"><img src="Images/TrashIconClosed.svg" class="button_icon trash_img"></button>
-                </div>
+                ${isAdmin ? `
+                    <button onclick="transferWaitlistMember('${key}', '${value.florr_username}', '${value.discord_username}')" class="red_button">Added to Guild?</button>
+                    <div class="list_item_options">
+                        <button onclick="showEditPopup('${key}', '${value.florr_username}', '${value.discord_username}')" class="small_option_button"><img src="Images/EditIcon.svg" class="button_icon edit_img"></button>
+                        <button onclick="showDeleteUserPopup('${key}', '${value.florr_username}')" class="small_option_button"><img src="Images/TrashIconClosed.svg" class="button_icon trash_img"></button>
+                    </div>
+                ` : ""}
             `;
-
-            waitlistMember.querySelector(".trash_img").addEventListener("mouseenter", function() {
-                waitlistMember.querySelector(".trash_img").src = "Images/TrashIconOpen.svg";
-            });
-            waitlistMember.querySelector(".trash_img").addEventListener("mouseleave", function() {
-                waitlistMember.querySelector(".trash_img").src = "Images/TrashIconClosed.svg";
-            });
+                
+            if (isAdmin) {
+                waitlistMember.querySelector(".trash_img").addEventListener("mouseenter", function() {
+                    waitlistMember.querySelector(".trash_img").src = "Images/TrashIconOpen.svg";
+                });
+                waitlistMember.querySelector(".trash_img").addEventListener("mouseleave", function() {
+                    waitlistMember.querySelector(".trash_img").src = "Images/TrashIconClosed.svg";
+                });
+            }
 
             document.querySelector("#waitlist_scroll").appendChild(waitlistMember);
             place++;
         }
+
+        document.querySelector("#member_count").innerText = "Total Members Waiting: " + (place - 1);
     });
 }
 

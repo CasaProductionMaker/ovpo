@@ -277,35 +277,56 @@ h2 {
 
 #waitlist_panel {
     background-color: #00000055;
-    max-height: 50%;
     overflow: hidden;
-    width: 50%;
     border-radius: 20px;
     padding: 10px;
     box-shadow: 0 0 5px;
+    flex: 2;
 }
 #waitlist_scroll {
     overflow-y: scroll;
     width: 100%;
+    flex: 1;
 }
 
 /* Members */
 
 #members_panel {
     background-color: #00000055;
-    max-height: 50%;
     overflow: hidden;
-    width: 50%;
     border-radius: 20px;
     padding: 10px;
     box-shadow: 0 0 5px;
+    flex: 2;
 }
+
+#members_info_panel {
+    background-color: #00000055;
+    overflow: hidden;
+    border-radius: 20px;
+    padding: 10px;
+    box-shadow: 0 0 5px;
+    flex: 1;
+}
+
+.no_margin {
+    margin: 0;
+}
+
 #members_scroll {
     overflow-y: scroll;
     width: 100%;
 }
 
 /* Both List Sites */
+
+#main_ui_panel {
+    max-height: 50%;
+    width: 70%;
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+}
 
 .list_member {
     text-align: center;
