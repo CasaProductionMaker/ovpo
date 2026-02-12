@@ -7,3 +7,5 @@ const navBarHTML = `<div id="top_bar">
 </div>`;
 
 document.body.insertAdjacentHTML('beforeend', navBarHTML);
+
+window.scrollTo(0,1)

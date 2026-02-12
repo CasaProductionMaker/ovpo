@@ -2,14 +2,15 @@ body {
     margin: 0;
     font-family: 'Ubuntu', sans-serif;
     font-weight: 500;
-    overflow: hidden;
     padding: 0;
+    overflow: scroll;
+    background-color: #ffe95e;
 }
 
 /* Top bar */
 
 #top_bar {
-    position: absolute;
+    position: fixed;
     display: flex;
     width: calc(100% - 40px);
     flex-direction: row;
@@ -477,6 +478,7 @@ input[type="text"].transparent_input::placeholder {
     #main_ui_panel {
         flex-direction: column;
         width: 90%;
+        max-height: 70%;
     }
 
     .top_bar_item::after {
