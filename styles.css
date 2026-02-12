@@ -81,7 +81,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 50px;
+    padding: min(50px, 5vw);
     box-sizing: border-box;
     gap: 30px;
     flex-direction: row;
@@ -455,13 +455,31 @@ input[type="text"].transparent_input::placeholder {
 
     .website_section {
         flex-direction: column;
+        justify-content: center;
+        padding-top: 130px;
+        min-height: fit-content;
     }
 
     .flex_info {
         align-items: center;
+        flex: 1;
+        max-height: fit-content;
+    }
+
+    .main_icon {
+        max-height: min(320px, 50vw);
     }
 
     h1, p {
         text-align: center;
+    }
+    
+    #main_ui_panel {
+        flex-direction: column;
+        width: 90%;
+    }
+
+    .top_bar_item::after {
+        content: none;
     }
 }
