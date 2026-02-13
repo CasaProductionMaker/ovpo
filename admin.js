@@ -117,7 +117,7 @@ function showEditPopup(userID, florr_username, discord_username) {
 
     requestAnimationFrame(() => {
         popupWindow.style.width = "75%";
-        popupWindow.style.left = "12.5%";
+        popupWindow.style.left = "calc(12.5% - 31px)";
     });
 }
 
@@ -135,7 +135,7 @@ function showDeleteUserPopup(userID, florr_username) {
 
     requestAnimationFrame(() => {
         popupWindow.style.width = "75%";
-        popupWindow.style.left = "12.5%";
+        popupWindow.style.left = "calc(12.5% - 31px)";
     });
 }
 
