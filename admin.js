@@ -160,7 +160,7 @@ function closePopup() {
 }
 
 firebase.auth().onAuthStateChanged(async (user) => {
-    console.log(user)
+    console.log(user.uid)
     if (user) {
         try {
             const idTokenResult = await user.getIdTokenResult(true);
@@ -179,6 +179,8 @@ firebase.auth().onAuthStateChanged(async (user) => {
         }
 
         loadWaitlist();
+
+        alert("Your UID is " + user.uid)
     } else {
         //You're logged out.
     }
