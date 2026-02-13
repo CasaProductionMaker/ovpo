@@ -180,7 +180,7 @@ firebase.auth().onAuthStateChanged(async (user) => {
 
         loadWaitlist();
 
-        alert("Your UID is " + user.uid)
+        // alert("Your UID is " + user.uid)
     } else {
         //You're logged out.
     }
