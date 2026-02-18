@@ -46,7 +46,7 @@ function loadMembers(filter = "") {
             <p>(@${value.discord_username})</p>
             <p>${value.strike_amount} strikes.</p>
             ${isAdmin ? `<button onclick="removeFromMembers('${key}')" class="red_button">Left Guild?</button>` : ""}
-            ${isAdmin ? `<button onclick="addStrike('${key}')" class="red_button">Add Strike</button>` : ""}`;
+            ${isAdmin ? `<button onclick="addStrike('${key}')" class="red_button">Add Strike</button><button onclick="removeStrike('${key}')" class="red_button">Remove Strike</button>` : ""}`;
             document.querySelector("#members_scroll").appendChild(member);
             totalAmount++;
 
@@ -79,6 +79,19 @@ async function addStrike(key) {
     })
     await firebase.database().ref("/members/" + key).update({
         strike_amount: currentAmount + 1
+    });
+
+    unloadMembers();
+    loadMembers(document.querySelector("#search_input").value);
+}
+
+async function removeStrike(key) {
+    let currentAmount = 0;
+    await firebase.database().ref("members/" + key).once('value', (data) => {
+        currentAmount = data.val().strike_amount;
+    })
+    await firebase.database().ref("/members/" + key).update({
+        strike_amount: currentAmount - 1
     });
 
     unloadMembers();
