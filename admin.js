@@ -88,6 +88,14 @@ function transferWaitlistMember(key, florr_username, discord_username) {
 		time_added: Date.now()
 	});
     firebase.database().ref("/waitlist/" + key).remove();
+
+    firebase.database().ref("/bot_tasks/").push({
+		type: "waitlist_to_guild", 
+        info: {
+            discord_username: discord_username
+        }
+	});
+
     unloadWaitlist();
     loadWaitlist(document.querySelector("#search_input").value);
 }
