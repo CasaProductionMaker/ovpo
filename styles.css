@@ -414,7 +414,6 @@ input[type="text"].transparent_input::placeholder {
     padding: 30px;
     transition: width 0.5s ease-in-out, left 0.5s ease-in-out;
     overflow: hidden;
-    /* box-sizing: border-box; */
 }
 
 .close_popup {
@@ -432,6 +431,12 @@ input[type="text"].transparent_input::placeholder {
 
 .form_button {
     margin: 0;
+}
+
+textarea {
+    resize: none;
+    border-radius: 1em;
+    padding: 1em;
 }
 
 /* Scrollbar */

@@ -73,16 +73,21 @@ function removeFromMembers(key) {
 }
 
 async function addStrike(key) {
-    let currentAmount = 0;
+    let florrUser = 0;
     await firebase.database().ref("members/" + key).once('value', (data) => {
-        currentAmount = data.val().strike_amount;
+        florrUser = data.val().florr_username;
     })
-    await firebase.database().ref("/members/" + key).update({
-        strike_amount: currentAmount + 1
-    });
+    showStrikePopup(key, florrUser);
+    // let currentAmount = 0;
+    // await firebase.database().ref("members/" + key).once('value', (data) => {
+    //     currentAmount = data.val().strike_amount;
+    // })
+    // await firebase.database().ref("/members/" + key).update({
+    //     strike_amount: currentAmount + 1
+    // });
 
-    unloadMembers();
-    loadMembers(document.querySelector("#search_input").value);
+    // unloadMembers();
+    // loadMembers(document.querySelector("#search_input").value);
 }
 
 async function removeStrike(key) {
@@ -96,6 +101,63 @@ async function removeStrike(key) {
 
     unloadMembers();
     loadMembers(document.querySelector("#search_input").value);
+}
+
+async function addStrikeTo(userID) {
+    let strike_giver = document.querySelector("#your_discord_username_input").value;
+    let strike_receiver = "";
+    let strike_reason = document.querySelector("#strike_reason").value;
+
+    let currentAmount = 0;
+    await firebase.database().ref("members/" + userID).once('value', (data) => {
+        currentAmount = data.val().strike_amount;
+        strike_receiver = data.val().florr_username;
+    })
+    await firebase.database().ref("/members/" + userID).update({
+        strike_amount: currentAmount + 1
+    });
+
+    await firebase.database().ref("/stafflog").push({
+        type: "strike", 
+        done_by: "@" + strike_giver, 
+        done_to: strike_receiver, 
+        reason: strike_reason, 
+        date_given: Date.now()
+    });
+
+    unloadMembers();
+    loadMembers(document.querySelector("#search_input").value);
+    document.querySelector(".popup_window").remove();
+}
+
+function showStrikePopup(userID, florr_username) {
+    const popupWindow = document.createElement("div");
+    popupWindow.classList.add("popup_window");
+    popupWindow.innerHTML = `
+        <h1>Add Strike to ${florr_username}?</h1>
+        <div id="waitlist_form_holder" class="flex_column">
+            <div class="form_section">
+                <label for="your_discord_username_input">Your Discord username (Not display name): </label>
+                <input type="text" name="your_discord_username_input" id="your_discord_username_input">
+            </div>
+
+            <textarea id="strike_reason" name="strike_reason" rows="4" cols="50" placeholder="Reason..."></textarea>
+
+            <button onclick="addStrikeTo('${userID}')">Add Strike</button>
+        </div>
+        <button onclick="closePopup()" class="close_popup"><img src="Images/ClosePopup.svg" class="button_icon"></button>
+    `;
+
+    document.body.appendChild(popupWindow);
+
+    requestAnimationFrame(() => {
+        popupWindow.style.width = "75%";
+        popupWindow.style.left = "calc(12.5% - 31px)";
+    });
+}
+
+function closePopup() {
+    document.querySelector(".popup_window").remove();
 }
 
 firebase.auth().onAuthStateChanged(async (user) => {
