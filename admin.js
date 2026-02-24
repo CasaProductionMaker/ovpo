@@ -101,6 +101,8 @@ function transferWaitlistMember(key, florr_username, discord_username) {
 }
 
 function showEditPopup(userID, florr_username, discord_username) {
+    if (document.querySelector(".popup_window")) return;
+
     const popupWindow = document.createElement("div");
     popupWindow.classList.add("popup_window");
     popupWindow.innerHTML = `
@@ -130,6 +132,8 @@ function showEditPopup(userID, florr_username, discord_username) {
 }
 
 function showDeleteUserPopup(userID, florr_username) {
+    if (document.querySelector(".popup_window")) return;
+    
     const popupWindow = document.createElement("div");
     popupWindow.classList.add("popup_window");
     popupWindow.innerHTML = `
